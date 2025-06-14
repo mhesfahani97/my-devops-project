@@ -1,0 +1,161 @@
+---
+services:
+  elasticsearch:
+    image: docker.arvancloud.ir/elasticsearch:7.9.1
+    container_name: elasticsearch
+    hostname: elasticsearch
+    restart: always
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - test_data:/usr/share/elasticsearch/data/
+      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      - discovery.type=single-node
+      - http.host=0.0.0.0
+      - transport.host=0.0.0.0
+      - xpack.security.enabled=false
+      - xpack.monitoring.enabled=false
+      - cluster.name=elasticsearch
+      - bootstrap.memory_lock=true
+    networks:
+      - elk
+
+  logstash:
+    image: docker.arvancloud.ir/logstash:7.9.1
+    container_name: logstash
+    hostname: logstash
+    restart: always
+    ports:
+      - "5044:5044"
+      - "9600:9600"
+    volumes:
+      - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ls_data:/usr/share/logstash/data
+      - /etc/timezone:/etc/timezone:ro
+
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  kibana:
+    image: docker.arvancloud.ir/kibana:7.9.1
+    container_name: kibana
+    hostname: kibana
+    restart: always
+    ports:
+      - "5601:5601"
+    volumes:
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+      - kb_data:/usr/share/kibana/data
+      - /etc/timezone:/etc/timezone:ro
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  gitlab:
+    image: docker.arvancloud.ir/gitlab/gitlab-ce:17.11.0-ce.0
+    container_name: gitlab
+    hostname: 'gitlab.mhesfahani.ir'
+    restart: always
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://gitlab.mhesfahani.ir'
+        nginx['redirect_http_to_https'] = true
+        ###
+        gitlab_rails['time_zone'] = 'Tehran'
+        gitlab_rails['initial_root_password'] = '${GITLAB_ROOT_PASS}'
+        gitlab_rails['rack_attack_git_basic_auth'] = {
+          'enabled' => true,
+          'ip_whitelist' => ["127.0.0.1"],
+          'maxretry' => 10, # Limit the number of Git HTTP authentication attempts per IP
+          'findtime' => 60, # Reset the auth attempt counter per IP after 60 seconds
+          'bantime' => 3600 # Ban an IP for one hour (3600s) after too many auth attempts
+        }
+        ###
+        letsencrypt['contact_emails'] = ['mhesfahani97@gmail.com']
+        letsencrypt['enable'] = true
+        letsencrypt['auto_renew'] = true
+        # Renew every 7th day of the month at 12:30
+        letsencrypt['auto_renew_hour'] = "12"
+        letsencrypt['auto_renew_minute'] = "30"
+        letsencrypt['auto_renew_day_of_month'] = "*/7"
+        ###
+        prometheus_monitoring['enable'] = true
+        prometheus['listen_address'] = '0.0.0.0:9090'
+        prometheus['monitor_kubernetes'] = false
+        prometheus['flags'] = {
+          'storage.tsdb.path' => "/var/opt/gitlab/prometheus/data",
+          'storage.tsdb.retention.time' => "7d",
+          'storage.tsdb.retention.size' => "2GB",
+          'config.file' => "/var/opt/gitlab/prometheus/prometheus.yml"
+        }
+        ###
+        # Limit backup lifetime to 7 days - 604800 seconds
+        gitlab_rails['backup_keep_time'] = 604800
+        ###
+        registry_nginx['redirect_http_to_https'] = true
+        registry_nginx['listen_port'] = 8050
+    ports:
+      - '80:80'     # HTTP
+      - '443:443'   # HTTPS
+      - '22:22'     # GitHub SSH
+      - '9090:9090' # Prometheus
+      - '8050:8050' # Registry
+    volumes:
+      - ./gitlab-data/config:/etc/gitlab
+      - ./gitlab-data/logs:/var/log/gitlab
+      - ./gitlab-data/data:/var/opt/gitlab
+      - ./gitlab-data/secret:/secret/gitlab/backups
+      - /etc/timezone:/etc/timezone:ro
+    mem_limit: 8g
+    cpus: 4.0
+    networks:
+      - gitlab
+
+  runner:
+    image: gitlab/gitlab-runner:v17.11.0
+    container_name: runner
+    restart: always
+    networks: 
+      - gitlab
+    depends_on:
+      - gitlab
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - runner-data:/etc/gitlab-runner
+      - /etc/timezone:/etc/timezone:ro
+
+  grafana:
+    image: grafana/grafana:11.6.1
+    container_name: grafana
+    restart: always
+    user: "${UID}:${GID}" #sudo chown UID:GID grafana-data
+    networks:
+      - gitlab
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - /etc/timezone:/etc/timezone:ro
+
+networks:
+  gitlab:
+    name: gitlab
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: gitlab
+  elk:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: elk
+
+volumes:
+  test-data:
+  ls-data:
+  kb-data:
+  runner-data:
+  grafana-data:
