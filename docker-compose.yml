@@ -1,5 +1,35 @@
 ---
 services:
+################################################# Web #################################################
+  application:
+    image: application:6.9
+    container_name: application
+    hostname: application
+    restart: always
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      MONGO_URI: mongodb://database:27017/appdb
+    ports:
+      - "5000:5000"
+    depends_on:
+      - database
+    networks:
+      - app-db
+################################################# Mongo #################################################
+  database:
+    image: mongo:6.0
+    container_name: database
+    hostname: database
+    restart: always
+    volumes:
+      - mongo-data:/data/db
+      - /etc/timezone:/etc/timezone:ro
+    expose:
+      - "27017:27017"
+    networks:
+      - app-db
+################################################# ElasticSearch #################################################
   elasticsearch:
     image: docker.arvancloud.ir/elasticsearch:7.9.1
     container_name: elasticsearch
@@ -9,7 +39,7 @@ services:
       - "9200:9200"
       - "9300:9300"
     volumes:
-      - test_data:/usr/share/elasticsearch/data/
+      - test-data:/usr/share/elasticsearch/data/
       - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       - /etc/timezone:/etc/timezone:ro
     environment:
@@ -22,7 +52,7 @@ services:
       - bootstrap.memory_lock=true
     networks:
       - elk
-
+################################################# LogStash #################################################
   logstash:
     image: docker.arvancloud.ir/logstash:7.9.1
     container_name: logstash
@@ -34,14 +64,14 @@ services:
     volumes:
       - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
       - ./logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
-      - ls_data:/usr/share/logstash/data
+      - ls-data:/usr/share/logstash/data
       - /etc/timezone:/etc/timezone:ro
 
     networks:
       - elk
     depends_on:
       - elasticsearch
-
+################################################# Kibana #################################################
   kibana:
     image: docker.arvancloud.ir/kibana:7.9.1
     container_name: kibana
@@ -51,13 +81,13 @@ services:
       - "5601:5601"
     volumes:
       - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
-      - kb_data:/usr/share/kibana/data
+      - kb-data:/usr/share/kibana/data
       - /etc/timezone:/etc/timezone:ro
     networks:
       - elk
     depends_on:
       - elasticsearch
-
+################################################# GitLab #################################################
   gitlab:
     image: docker.arvancloud.ir/gitlab/gitlab-ce:17.11.0-ce.0
     container_name: gitlab
@@ -117,7 +147,7 @@ services:
     cpus: 4.0
     networks:
       - gitlab
-
+################################################# Runner #################################################
   runner:
     image: gitlab/gitlab-runner:v17.11.0
     container_name: runner
@@ -130,7 +160,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - runner-data:/etc/gitlab-runner
       - /etc/timezone:/etc/timezone:ro
-
+################################################# Grafana #################################################
   grafana:
     image: grafana/grafana:11.6.1
     container_name: grafana
@@ -143,48 +173,29 @@ services:
       - /etc/timezone:/etc/timezone:ro
 
 networks:
+  app-db:
+    name: app-db
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: app-db
+
   gitlab:
     name: gitlab
     driver: bridge
     driver_opts:
       com.docker.network.bridge.name: gitlab
   elk:
+    name: elk
     driver: bridge
     driver_opts:
       com.docker.network.bridge.name: elk
 
 volumes:
+  mongo-data:
   test-data:
   ls-data:
   kb-data:
   runner-data:
   grafana-data:
 
-
-
-
-
-
-
----
-services:
-  web:
-    build: .
-    ports:
-      - "5000:5000"
-    environment:
-      MONGO_URI: mongodb://mongo:27017/appdb
-    depends_on:
-      - mongo
-
-  mongo:
-    image: mongo:6.0
-    restart: always
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo_data:/data/db
-
-volumes:
-  mongo_data:
 
