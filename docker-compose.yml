@@ -69,7 +69,7 @@ services:
       - gitlab
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - runner-data:/etc/gitlab-runner
+      - ./runner-config:/etc/gitlab-runner
       - /etc/timezone:/etc/timezone:ro
     networks: 
       - gitlab
@@ -158,11 +158,19 @@ networks:
       com.docker.network.bridge.name: gitlab
 
 volumes:
-  mongo-data:
-  mongo-log:
-  gitlab-config:
-  gitlab-logs:
-  gitlab-data:
-  gitlab-secret:
-  runner-data:
-  grafana-data:
+  mongo_data:
+    name: mongo_data
+  mongo_log:
+    name: mongo_log
+  gitlab_config:
+    name: gitlab_config
+  gitlab_logs:
+    name: gitlab_logs
+  gitlab_data:
+    name: gitlab_data
+  gitlab_secret:
+    name: gitlab_secret
+  runner_data:
+    name: runner_data
+  grafana_data:
+    name: grafana_data
