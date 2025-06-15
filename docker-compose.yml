@@ -1,6 +1,6 @@
 ---
 services:
-################################################# Web #################################################
+################################################# Application #################################################
   application:
     image: application:6.9
     container_name: application
@@ -9,14 +9,14 @@ services:
     volumes:
       - /etc/timezone:/etc/timezone:ro
     environment:
-      MONGO_URI: mongodb://database:27017/appdb
+      MONGO_URI: mongodb://lifeweb:It5~TPn04p1-eTAH@database:27017/appdb?authSource=admin
     ports:
       - "5000:5000"
     depends_on:
       - database
     networks:
       - app-db
-################################################# Mongo #################################################
+################################################# Database #################################################
   database:
     image: docker.arvancloud.ir/mongo:6.0
     container_name: database
@@ -26,6 +26,9 @@ services:
       - mongo-data:/data/db
       - mongo-log:/var/log/mongodb/
       - /etc/timezone:/etc/timezone:ro
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: lifeweb
+      MONGO_INITDB_ROOT_PASSWORD: It5~TPn04p1-eTAH
     expose:
       - "27017:27017"
     networks:
@@ -57,30 +60,32 @@ services:
     cpus: 4.0
     networks:
       - gitlab
-        ################################################## Runner #################################################
-        #  runner:
-        #    image: docker.arvancloud.ir/gitlab/gitlab-runner:v17.11.0
-        #    container_name: runner
-        #    restart: always
-        #    networks: 
-        #      - gitlab
-        #    depends_on:
-        #      - gitlab
-        #    volumes:
-        #      - /var/run/docker.sock:/var/run/docker.sock
-        #      - runner-data:/etc/gitlab-runner
-        #      - /etc/timezone:/etc/timezone:ro
-        ################################################## Grafana #################################################
-        #  grafana:
-        #    image: grafana/grafana:11.6.1
-        #    container_name: grafana
-        #    restart: always
-        #    user: "${UID}:${GID}" #sudo chown UID:GID grafana-data
-        #    networks:
-        #      - gitlab
-        #    volumes:
-        #      - grafana-data:/var/lib/grafana
-        #      - /etc/timezone:/etc/timezone:ro
+################################################# Runner #################################################
+  runner:
+    image: docker.arvancloud.ir/gitlab/gitlab-runner:v17.11.0
+    container_name: runner
+    restart: always
+    depends_on:
+      - gitlab
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - runner-data:/etc/gitlab-runner
+      - /etc/timezone:/etc/timezone:ro
+    networks: 
+      - gitlab
+################################################# Grafana #################################################
+  grafana:
+    image: docker.arvancloud.ir/grafana/grafana:11.6.1
+    container_name: grafana
+    hostname: grafana
+    restart: always
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - /etc/timezone:/etc/timezone:ro
+    ports:
+      - "3000:3000"
+    networks:
+      - gitlab
         ################################################## ElasticSearch #################################################
         #  elasticsearch:
         #    image: docker.arvancloud.ir/elasticsearch:7.9.1
@@ -159,3 +164,5 @@ volumes:
   gitlab-logs:
   gitlab-data:
   gitlab-secret:
+  runner-data:
+  grafana-data:

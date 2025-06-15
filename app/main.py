@@ -2,7 +2,10 @@ from flask import Flask, jsonify, request
 from flask_pymongo import PyMongo
 import os
 
-MONGO_URI = os.environ.get("MONGO_URI", "mongodb://mongo:27017/appdb")
+MONGO_URI = os.environ.get(
+    "MONGO_URI",
+    "mongodb://lifeweb:It5~TPn04p1-eTAH@database:27017/appdb?authSource=admin"
+)
 
 app = Flask(__name__)
 app.config["MONGO_URI"] = MONGO_URI
