@@ -41,7 +41,7 @@ services:
     restart: always
     environment:
       GITLAB_OMNIBUS_CONFIG: |
-        external_url 'http://gitlab'
+        external_url 'http://163.5.94.195'
         nginx['redirect_http_to_https'] = false
         gitlab_rails['time_zone'] = 'Tehran'
         registry_external_url 'http://gitlab:5050'
@@ -49,7 +49,6 @@ services:
     ports:
       - '80:80'
       - '22:22'
-      - '5050:5050'
     volumes:
       - gitlab_config:/etc/gitlab
       - gitlab_logs:/var/log/gitlab
