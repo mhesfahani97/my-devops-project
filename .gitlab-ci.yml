@@ -1,20 +1,20 @@
-#stages:
+stages:
 #  - test
-#  - build
+#- build
 #  - push
 #  - deploy
-#
-#variables:
-#  PROJECT_NAME: application
-#  DOCKER_REGISTRY: gitlab:8050
-#  IMAGE_TAG: "$DOCKER_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_SHORT_SHA"
-#
-#default:
-#  image: docker:20.10.24  # Stable Docker CLI image
-#  services: []
-#  before_script:
-#    - docker info
-#
+
+variables:
+  PROJECT_NAME: application
+  DOCKER_REGISTRY: gitlab:5050
+  IMAGE_TAG: "$DOCKER_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_SHORT_SHA"
+
+default:
+  image: docker:20.10.24
+  services: []
+  before_script:
+    - docker info
+
 ## --- Stage 1: Test ---
 #test:
 #  stage: test
