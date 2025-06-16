@@ -1,6 +1,6 @@
 stages:
 #  - test
-#- build
+   - build
 #  - push
 #  - deploy
 
@@ -25,13 +25,13 @@ default:
 #    - curl --fail http://localhost:5000/health || (echo "Health check failed" && exit 1)
 #  tags: [production-like]
 #
-## --- Stage 2: Build ---
-#build:
-#  stage: build
-#  script:
-#    - docker build -t $IMAGE_TAG .
-#  tags: [production-like]
-#
+# --- Stage 2: Build ---
+build:
+  stage: build
+  script:
+    - docker build -t $IMAGE_TAG .
+  tags: [production-like]
+
 ## --- Stage 3: Push ---
 #push:
 #  stage: push
