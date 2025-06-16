@@ -1,7 +1,55 @@
-stages:
-  - test
-  - build
-  - push
-  - deploy
-
-
+#stages:
+#  - test
+#  - build
+#  - push
+#  - deploy
+#
+#variables:
+#  PROJECT_NAME: application
+#  DOCKER_REGISTRY: gitlab:8050
+#  IMAGE_TAG: "$DOCKER_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_SHORT_SHA"
+#
+#default:
+#  image: docker:20.10.24  # Stable Docker CLI image
+#  services: []
+#  before_script:
+#    - docker info
+#
+## --- Stage 1: Test ---
+#test:
+#  stage: test
+#  script:
+#    - echo "Running health check..."
+#    - docker-compose -f docker-compose.yml up -d database
+#    - sleep 10
+#    - curl --fail http://localhost:5000/health || (echo "Health check failed" && exit 1)
+#  tags: [production-like]
+#
+## --- Stage 2: Build ---
+#build:
+#  stage: build
+#  script:
+#    - docker build -t $IMAGE_TAG .
+#  tags: [production-like]
+#
+## --- Stage 3: Push ---
+#push:
+#  stage: push
+#  script:
+#    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $DOCKER_REGISTRY
+#    - docker push $IMAGE_TAG
+#  tags: [production-like]
+#  only:
+#    - main
+#
+## --- Stage 4: Deploy ---
+#deploy:
+#  stage: deploy
+#  script:
+#    - echo "Deploying to production..."
+#    - docker pull $IMAGE_TAG
+#    - docker-compose -f docker-compose.yml up -d
+#  tags: [production-like]
+#  only:
+#    - main
+#

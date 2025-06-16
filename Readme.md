@@ -4,6 +4,7 @@ http://localhost/admin/runners/new
 tag: production-like
 docker exec -it runner bash
 http://gitlab
+git remote add gitlab git@gitlab.com:your-username/your-project.git
 
 root
 docker exec -it gitlab grep 'Password:' /etc/gitlab/initial_root_password
