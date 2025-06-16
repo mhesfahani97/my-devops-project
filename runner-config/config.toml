@@ -1,16 +1,18 @@
 concurrent = 1
 check_interval = 0
+connection_max_age = "15m0s"
 shutdown_timeout = 0
 
 [session_server]
   session_timeout = 1800
 
+
 [[runners]]
   name = "lifeweb"
   url = "http://gitlab"
   id = 0
-  token = "glrt-dDoxCnU6MU8tbfvcoaGmKHyU7Dis41kQ.0w0angxr5"
-  token_obtained_at = 2025-06-16T06:58:09Z
+  token = "glrt-bzoxCnA6MQp0OjMKdToxc8glmxLjXe2PEeZtvSUnkxA.1705p4pwj"
+  token_obtained_at = 2025-06-16T09:55:04Z
   token_expires_at = 0001-01-01T00:00:00Z
   executor = "docker"
   [runners.custom_build_dir]
