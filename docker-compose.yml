@@ -23,8 +23,8 @@ services:
     hostname: database
     restart: always
     volumes:
-      - mongo-data:/data/db
-      - mongo-log:/var/log/mongodb/
+      - mongo_data:/data/db
+      - mongo_log:/var/log/mongodb/
       - /etc/timezone:/etc/timezone:ro
     environment:
       MONGO_INITDB_ROOT_USERNAME: lifeweb
@@ -37,7 +37,7 @@ services:
   gitlab:
     image: docker.arvancloud.ir/gitlab/gitlab-ce:17.11.0-ce.0
     container_name: gitlab
-    hostname: 'gitlab'
+    hostname: gitlab
     restart: always
     environment:
       GITLAB_OMNIBUS_CONFIG: |
@@ -51,10 +51,10 @@ services:
       - '22:22'
       - '8050:8050'
     volumes:
-      - gitlab-config:/etc/gitlab
-      - gitlab-logs:/var/log/gitlab
-      - gitlab-data:/var/opt/gitlab
-      - gitlab-secret:/secret/gitlab/backups
+      - gitlab_config:/etc/gitlab
+      - gitlab_logs:/var/log/gitlab
+      - gitlab_data:/var/opt/gitlab
+      - gitlab_secret:/secret/gitlab/backups
       - /etc/timezone:/etc/timezone:ro
     mem_limit: 8g
     cpus: 4.0
@@ -64,9 +64,11 @@ services:
   runner:
     image: docker.arvancloud.ir/gitlab/gitlab-runner:v17.11.0
     container_name: runner
+    hostname: runner
     restart: always
     depends_on:
-      - gitlab
+      gitlab:
+        condition: service_healthy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./runner-config:/etc/gitlab-runner
@@ -80,7 +82,7 @@ services:
     hostname: grafana
     restart: always
     volumes:
-      - grafana-data:/var/lib/grafana
+      - grafana_data:/var/lib/grafana
       - /etc/timezone:/etc/timezone:ro
     ports:
       - "3000:3000"
