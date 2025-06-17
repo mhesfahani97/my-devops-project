@@ -5,10 +5,10 @@ stages:
 #  - deploy
 #  - ping-gitlab
 
-#variables:
+variables:
 #  PROJECT_NAME: application
 #  DOCKER_REGISTRY: gitlab:5050
-#  IMAGE_TAG: "$DOCKER_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_SHORT_SHA"
+  IMAGE_TAG: "$DOCKER_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_SHORT_SHA"
 
 #default:
 #  image: docker.arvancloud.ir/docker:latest
@@ -31,8 +31,7 @@ stages:
 build:
   stage: build
   script:
-    - docker info
-    #- docker build -t $IMAGE_TAG .
+    - docker build -t $IMAGE_TAG .app
   tags: [production-like]
 
 ## --- Stage 3: Push ---
