@@ -7,7 +7,7 @@ stages:
 
 variables:
   PROJECT_NAME: application
-  DOCKER_REGISTRY: gitlab:5050
+  DOCKER_REGISTRY: localhost:5050
   IMAGE_TAG: "$DOCKER_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_SHORT_SHA"
 
 #default:
