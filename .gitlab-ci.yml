@@ -13,7 +13,8 @@ default:
   image: docker.arvancloud.ir/docker:latest
   services: []
   before_script:
-    - docker info
+    - echo "default"
+    #- docker info
 
 ## --- Stage 1: Test ---
 #test:
@@ -29,7 +30,8 @@ default:
 build:
   stage: build
   script:
-    - docker build -t $IMAGE_TAG .
+    - echo "build"
+    #- docker build -t $IMAGE_TAG .
   tags: [production-like]
 
 ## --- Stage 3: Push ---
