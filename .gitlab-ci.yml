@@ -74,4 +74,5 @@ ping-gitlab:
   script:
     - apk add --no-cache curl
     - echo "Pinging GitLab..."
-    - curl -v http://gitlab
+    - curl -v http://gitlab\
+  tags: [production-like]
