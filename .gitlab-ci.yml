@@ -1,19 +1,21 @@
 stages:
 #  - test
-   - build
-#  - push
+  - build
+  - push
 #  - deploy
+#  - ping-gitlab
 
 variables:
   PROJECT_NAME: application
-  DOCKER_REGISTRY: gitlab:5050
+  DOCKER_REGISTRY: localhost:5050
   IMAGE_TAG: "$DOCKER_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_SHORT_SHA"
 
-default:
-  image: docker.arvancloud.ir/docker:latest
-  services: []
-  before_script:
-    - docker info
+#default:
+#  image: docker.arvancloud.ir/docker:latest
+#  services: []
+#  before_script:
+#    - echo "default"
+    #- docker info
 
 ## --- Stage 1: Test ---
 #test:
@@ -25,22 +27,25 @@ default:
 #    - curl --fail http://localhost:5000/health || (echo "Health check failed" && exit 1)
 #  tags: [production-like]
 #
-# --- Stage 2: Build ---
+
 build:
   stage: build
   script:
-    - docker build -t $IMAGE_TAG .
+    - docker build -t $IMAGE_TAG app
   tags: [production-like]
 
-## --- Stage 3: Push ---
-#push:
-#  stage: push
-#  script:
-#    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $DOCKER_REGISTRY
-#    - docker push $IMAGE_TAG
-#  tags: [production-like]
-#  only:
-#    - main
+push:
+  stage: push
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $DOCKER_REGISTRY
+    - docker push $IMAGE_TAG
+  tags: [production-like]
+  after_script:
+    - echo "Cleaning up local Docker image..."
+    - docker rmi $IMAGE_TAG || true
+  tags: [production-like]
+  only:
+    - main
 #
 ## --- Stage 4: Deploy ---
 #deploy:
@@ -52,4 +57,3 @@ build:
 #  tags: [production-like]
 #  only:
 #    - main
-#

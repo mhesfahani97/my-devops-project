@@ -2,7 +2,7 @@
 services:
 ################################################# Application #################################################
 #  application:
-#    image: application:6.9
+#    image: 
 #    container_name: application
 #    hostname: application
 #    restart: always
@@ -41,14 +41,15 @@ services:
     restart: always
     environment:
       GITLAB_OMNIBUS_CONFIG: |
-        external_url 'http://gitlab'
+        external_url 'http://gitlab:80'
         nginx['redirect_http_to_https'] = false
         gitlab_rails['time_zone'] = 'Tehran'
-        registry_external_url 'http://gitlab:5050'
+        registry_external_url 'http://localhost:5050'
         registry_nginx['redirect_http_to_https'] = false
     ports:
       - '80:80'
       - '22:22'
+      - '5050:5050'
     volumes:
       - gitlab_config:/etc/gitlab
       - gitlab_logs:/var/log/gitlab
@@ -72,8 +73,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./runner-config/config.toml:/etc/gitlab-runner/config.toml
       - /etc/timezone:/etc/timezone:ro
-    networks: 
-      - gitlab
+    network_mode: 'host'
 ################################################# Grafana #################################################
   grafana:
     image: docker.arvancloud.ir/grafana/grafana:11.6.1
