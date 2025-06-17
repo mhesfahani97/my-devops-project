@@ -6,8 +6,8 @@ stages:
 #  - ping-gitlab
 
 variables:
-#  PROJECT_NAME: application
-#  DOCKER_REGISTRY: gitlab:5050
+  PROJECT_NAME: application
+  DOCKER_REGISTRY: gitlab:5050
   IMAGE_TAG: "$DOCKER_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_SHORT_SHA"
 
 #default:
