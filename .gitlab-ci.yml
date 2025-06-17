@@ -37,7 +37,7 @@ build:
 push:
   stage: push
   script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin 127.0.0.1:5050
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $DOCKER_REGISTRY
     - docker push $IMAGE_TAG
   tags: [production-like]
   only:
