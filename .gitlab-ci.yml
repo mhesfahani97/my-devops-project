@@ -1,7 +1,7 @@
 stages:
 #  - test
   - build
-#  - push
+  - push
 #  - deploy
 #  - ping-gitlab
 
@@ -27,22 +27,21 @@ variables:
 #    - curl --fail http://localhost:5000/health || (echo "Health check failed" && exit 1)
 #  tags: [production-like]
 #
-# --- Stage 2: Build ---
+
 build:
   stage: build
   script:
     - docker build -t $IMAGE_TAG app
   tags: [production-like]
 
-## --- Stage 3: Push ---
-#push:
-#  stage: push
-#  script:
-#    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $DOCKER_REGISTRY
-#    - docker push $IMAGE_TAG
-#  tags: [production-like]
-#  only:
-#    - main
+push:
+  stage: push
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $DOCKER_REGISTRY
+    - docker push $IMAGE_TAG
+  tags: [production-like]
+  only:
+    - main
 #
 ## --- Stage 4: Deploy ---
 #deploy:
