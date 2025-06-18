@@ -5,7 +5,6 @@ stages:
   - deploy
 
 variables:
-  PROJECT_NAME: application
   DOCKER_REGISTRY: localhost:5050
   IMAGE_TAG: "$DOCKER_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_SHORT_SHA"
 
@@ -50,9 +49,10 @@ deploy:
   stage: deploy
   script:
     - echo "Deploying to production..."
+    - docker container rm -f application || true
+    - sudo docker images | grep "$DOCKER_REGISTRY/$CI_PROJECT_PATH" | awk '{print $3}' | xargs docker rmi
     - echo "APP_IMAGE=$IMAGE_TAG" > .env
     - docker pull $IMAGE_TAG
-    - docker container rm -f application || true
     - docker compose  up -d application database
   tags: [production-like]
   only:
