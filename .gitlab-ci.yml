@@ -2,8 +2,7 @@ stages:
 #  - test
   - build
   - push
-#  - deploy
-#  - ping-gitlab
+  - deploy
 
 variables:
   PROJECT_NAME: application
@@ -46,14 +45,14 @@ push:
   tags: [production-like]
   only:
     - main
-#
-## --- Stage 4: Deploy ---
-#deploy:
-#  stage: deploy
-#  script:
-#    - echo "Deploying to production..."
-#    - docker pull $IMAGE_TAG
-#    - docker-compose -f docker-compose.yml up -d
-#  tags: [production-like]
-#  only:
-#    - main
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying to production..."
+    - echo "APP_IMAGE=$IMAGE_TAG" > .env
+    - docker pull $IMAGE_TAG
+    - docker compose  up -d application database
+  tags: [production-like]
+  only:
+    - main
