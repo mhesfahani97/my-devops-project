@@ -6,13 +6,12 @@ shutdown_timeout = 0
 [session_server]
   session_timeout = 1800
 
-
 [[runners]]
   name = "lifeweb"
-  url = "http://gitlab"
-  id = 0
-  token = "glrt-dDoxCnU6McB8WCjiInIsf4R_Rmpdp2EQ.0w0mtktob"
-  token_obtained_at = 2025-06-17T09:52:58Z
+  url = "http://localhost/"
+  id = 1
+  token = "glrtr-FNBKb9KZwasFhyhhyzTM"
+  token_obtained_at = 2025-06-18T07:41:15Z
   token_expires_at = 0001-01-01T00:00:00Z
   executor = "docker"
   [runners.custom_build_dir]
