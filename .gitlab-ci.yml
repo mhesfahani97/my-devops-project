@@ -15,7 +15,6 @@ variables:
 #    - echo "default"
     #- docker info
 
-## --- Stage 1: Test ---
 #test:
 #  stage: test
 #  script:

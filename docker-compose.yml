@@ -9,7 +9,7 @@ services:
     volumes:
       - /etc/timezone:/etc/timezone:ro
     environment:
-      MONGO_URI: mongodb://lifeweb:It5~TPn04p1-eTAH@database:27017/appdb?authSource=admin
+      MONGO_URI: "${MONGO_URI}"
     ports:
       - "5000:5000"
     depends_on:
@@ -27,8 +27,8 @@ services:
       - mongo_log:/var/log/mongodb/
       - /etc/timezone:/etc/timezone:ro
     environment:
-      MONGO_INITDB_ROOT_USERNAME: lifeweb
-      MONGO_INITDB_ROOT_PASSWORD: It5~TPn04p1-eTAH
+      MONGO_INITDB_ROOT_USERNAME: "${MONGO_INITDB_ROOT_USERNAME}"
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_INITDB_ROOT_PASSWORD}"
     expose:
       - "27017:27017"
     networks:
