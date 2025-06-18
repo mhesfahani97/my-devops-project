@@ -52,9 +52,8 @@ deploy:
     - echo "Deploying to production..."
     - echo "APP_IMAGE=$IMAGE_TAG" > .env
     - docker pull $IMAGE_TAG
+    - docker container rm -f application || true
     - docker compose  up -d application database
-    - echo "Cleaning up local Docker image..."
-    - docker rmi $IMAGE_TAG || true
   tags: [production-like]
   only:
     - main
