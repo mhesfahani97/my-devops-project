@@ -24,6 +24,7 @@ shutdown_timeout = 0
   [runners.docker]
     tls_verify = false
     image = "docker.arvancloud.ir/docker:latest"
+    network_mode = "host"
     privileged = true
     disable_entrypoint_overwrite = false
     oom_kill_disable = false
