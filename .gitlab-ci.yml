@@ -50,7 +50,7 @@ deploy:
   script:
     - echo "Deploying to production..."
     - docker container rm -f application || true
-    - docker images | grep "$DOCKER_REGISTRY/$CI_PROJECT_PATH" | awk '{print $3}' | xargs docker rmi
+    - docker images | grep "$DOCKER_REGISTRY/$CI_PROJECT_PATH" | awk '{print $3}' | xargs docker rmi -f || true
     - echo "APP_IMAGE=$IMAGE_TAG" > .env
     - docker pull $IMAGE_TAG
     - docker compose  up -d application database
