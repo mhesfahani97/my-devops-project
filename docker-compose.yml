@@ -102,8 +102,8 @@ services:
     ports:
       - "9090:9090"
     networks:
-      - grafana
       - app-db
+      - grafana
 ################################################# Mongo Exporter #################################################
   mongo-exporter:
       image: percona/mongodb_exporter:0.44.0
