@@ -6,3 +6,10 @@ scrape_configs:
       - targets: ["mongo-exporter:9216"]
         labels:
           environment: 'production-like'
+
+  - job_name: application
+    scrape_interval: 15s
+    static_configs:
+      - targets: ["application:5000"]
+        labels:
+          environment: 'production-like'
