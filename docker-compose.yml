@@ -30,7 +30,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: "${MONGO_INITDB_ROOT_USERNAME}"
       MONGO_INITDB_ROOT_PASSWORD: "${MONGO_INITDB_ROOT_PASSWORD}"
-      MONGO_DB: appdb
+      MONGO_INITDB_DB: appdb
     expose:
       - "27017:27017"
     networks:
@@ -114,7 +114,7 @@ services:
       environment:
         MONGODB_URI: mongodb://exporter:exporter@database:27017
       command: ["--collect-all", "--compatible-mode", "--discovering-mode"]
-      ports:
+      expose:
       - "9216:9216"
       networks:
         - app-db
