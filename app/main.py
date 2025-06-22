@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_pymongo import PyMongo
+from prometheus_flask_exporter import PrometheusMetrics
 import os
 
 MONGO_URI = os.environ.get(
@@ -9,6 +10,8 @@ MONGO_URI = os.environ.get(
 
 app = Flask(__name__)
 app.config["MONGO_URI"] = MONGO_URI
+
+metrics = PrometheusMetrics(app)
 
 mongo = PyMongo(app)
 

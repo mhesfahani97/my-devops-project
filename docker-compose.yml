@@ -68,9 +68,6 @@ services:
     container_name: runner
     hostname: runner
     restart: always
-    depends_on:
-      gitlab:
-        condition: service_healthy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./runner-config/config.toml:/etc/gitlab-runner/config.toml
@@ -85,6 +82,8 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
       - /etc/timezone:/etc/timezone:ro
+    depends_on:
+      - prometheus
     ports:
       - "3000:3000"
     networks:
@@ -99,6 +98,8 @@ services:
       - prometheus_data:/prometheus
       - ./prometheus:/etc/prometheus
       - /etc/timezone:/etc/timezone:ro
+    depends_on:
+      - mongo-exporter
     ports:
       - "9090:9090"
     networks:
