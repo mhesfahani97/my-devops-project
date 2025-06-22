@@ -1,21 +1,21 @@
 ---
 services:
 ################################################# Application #################################################
-#  application:
-#    image: "${APP_IMAGE}"
-#    container_name: application
-#    hostname: application
-#    restart: always
-#    volumes:
-#      - /etc/timezone:/etc/timezone:ro
-#    environment:
-#      MONGO_URI: "${MONGO_URI}"
-#    ports:
-#      - "5000:5000"
-#    depends_on:
-#      - database
-#    networks:
-#      - app-db
+  application:
+    image: "${APP_IMAGE}"
+    container_name: application
+    hostname: application
+    restart: always
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      MONGO_URI: "${MONGO_URI}"
+    ports:
+      - "5000:5000"
+    depends_on:
+      - database
+    networks:
+      - app-db
 ################################################# Database #################################################
   database:
     image: docker.arvancloud.ir/mongo:6.0
