@@ -1,21 +1,21 @@
 ---
 services:
 ################################################# Application #################################################
-  application:
-    image: "${APP_IMAGE}"
-    container_name: application
-    hostname: application
-    restart: always
-    volumes:
-      - /etc/timezone:/etc/timezone:ro
-    environment:
-      MONGO_URI: "${MONGO_URI}"
-    ports:
-      - "5000:5000"
-    depends_on:
-      - database
-    networks:
-      - app-db
+#  application:
+#    image: "${APP_IMAGE}"
+#    container_name: application
+#    hostname: application
+#    restart: always
+#    volumes:
+#      - /etc/timezone:/etc/timezone:ro
+#    environment:
+#      MONGO_URI: "${MONGO_URI}"
+#    ports:
+#      - "5000:5000"
+#    depends_on:
+#      - database
+#    networks:
+#      - app-db
 ################################################# Database #################################################
   database:
     image: docker.arvancloud.ir/mongo:6.0
@@ -29,6 +29,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: "${MONGO_INITDB_ROOT_USERNAME}"
       MONGO_INITDB_ROOT_PASSWORD: "${MONGO_INITDB_ROOT_PASSWORD}"
+      MONGO_DB: appdb
     expose:
       - "27017:27017"
     networks:
@@ -86,7 +87,36 @@ services:
     ports:
       - "3000:3000"
     networks:
-      - gitlab
+      - grafana
+################################################# Prometheus #################################################
+  prometheus:
+    image: prom/prometheus:v3.4.1
+    restart: always
+    container_name: prometeheus
+    hostname: prometheus
+    volumes:
+      - prometheus_data:/prometheus
+      - ./prometheus:/etc/prometheus
+      - /etc/timezone:/etc/timezone:ro
+    ports:
+      - "9090:9090"
+    networks:
+      - grafana
+      - app-db
+################################################# Mongo Exporter #################################################
+mongo-exporter:
+    image: 'percona/mongodb_exporter:0.40.0'
+    container_name: mongo-exporter
+    hostname: mongo-exporter
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      MONGODB_URI: mongodb://myUser:myPassword@mongo:27017
+    command: ["--collect-all", "--compatible-mode", "--discovering-mode"]
+    expose:
+    - "9216:9216"
+    networks:
+      - app-db
 
 networks:
   app-db:
@@ -99,6 +129,11 @@ networks:
     driver: bridge
     driver_opts:
       com.docker.network.bridge.name: gitlab
+  grafana:
+    name: grafana
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: grafana
 
 volumes:
   mongo_data:
@@ -117,3 +152,5 @@ volumes:
     name: runner_data
   grafana_data:
     name: grafana_data
+  prometheus_data:
+    name: prometheus_data
