@@ -104,19 +104,19 @@ services:
       - grafana
       - app-db
 ################################################# Mongo Exporter #################################################
-#mongo-exporter:
-#    image: 'percona/mongodb_exporter:0.40.0'
-#    container_name: mongo-exporter
-#    hostname: mongo-exporter
-#    volumes:
-#      - /etc/timezone:/etc/timezone:ro
-#    environment:
-#      MONGODB_URI: mongodb://myUser:myPassword@mongo:27017
-#    command: ["--collect-all", "--compatible-mode", "--discovering-mode"]
-#    expose:
-#    - "9216:9216"
-#    networks:
-#      - app-db
+  mongo-exporter:
+      image: 'percona/mongodb_exporter:0.40.0'
+      container_name: mongo-exporter
+      hostname: mongo-exporter
+      volumes:
+        - /etc/timezone:/etc/timezone:ro
+      environment:
+        MONGODB_URI: mongodb://exporter:exporter@database:27017
+      command: ["--collect-all", "--compatible-mode", "--discovering-mode"]
+      expose:
+      - "9216:9216"
+      networks:
+        - app-db
 
 networks:
   app-db:
