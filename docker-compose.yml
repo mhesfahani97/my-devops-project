@@ -106,7 +106,7 @@ services:
       - app-db
 ################################################# Mongo Exporter #################################################
   mongo-exporter:
-      image: 'percona/mongodb_exporter:0.44.0'
+      image: percona/mongodb_exporter:0.44.0
       container_name: mongo-exporter
       hostname: mongo-exporter
       volumes:
@@ -114,7 +114,7 @@ services:
       environment:
         MONGODB_URI: mongodb://exporter:exporter@database:27017
       command: ["--collect-all", "--compatible-mode", "--discovering-mode"]
-      expose:
+      ports:
       - "9216:9216"
       networks:
         - app-db
