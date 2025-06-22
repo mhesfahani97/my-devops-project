@@ -1,21 +1,21 @@
 ---
 services:
 ################################################# Application #################################################
-#  application:
-#    image: "${APP_IMAGE}"
-#    container_name: application
-#    hostname: application
-#    restart: always
-#    volumes:
-#      - /etc/timezone:/etc/timezone:ro
-#    environment:
-#      MONGO_URI: "${MONGO_URI}"
-#    ports:
-#      - "5000:5000"
-#    depends_on:
-#      - database
-#    networks:
-#      - app-db
+  application:
+    image: "${APP_IMAGE}"
+    container_name: application
+    hostname: application
+    restart: always
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      MONGO_URI: "${MONGO_URI}"
+    ports:
+      - "5000:5000"
+    depends_on:
+      - database
+    networks:
+      - app-db
 ################################################# Database #################################################
   database:
     image: docker.arvancloud.ir/mongo:6.0
@@ -104,19 +104,19 @@ services:
       - grafana
       - app-db
 ################################################# Mongo Exporter #################################################
-mongo-exporter:
-    image: 'percona/mongodb_exporter:0.40.0'
-    container_name: mongo-exporter
-    hostname: mongo-exporter
-    volumes:
-      - /etc/timezone:/etc/timezone:ro
-    environment:
-      MONGODB_URI: mongodb://myUser:myPassword@mongo:27017
-    command: ["--collect-all", "--compatible-mode", "--discovering-mode"]
-    expose:
-    - "9216:9216"
-    networks:
-      - app-db
+#mongo-exporter:
+#    image: 'percona/mongodb_exporter:0.40.0'
+#    container_name: mongo-exporter
+#    hostname: mongo-exporter
+#    volumes:
+#      - /etc/timezone:/etc/timezone:ro
+#    environment:
+#      MONGODB_URI: mongodb://myUser:myPassword@mongo:27017
+#    command: ["--collect-all", "--compatible-mode", "--discovering-mode"]
+#    expose:
+#    - "9216:9216"
+#    networks:
+#      - app-db
 
 networks:
   app-db:
