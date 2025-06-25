@@ -1,6 +1,6 @@
 ---
 services:
-################################################# Application #################################################
+############################################### Application #################################################
   application:
     image: "${APP_IMAGE}"
     container_name: application
@@ -119,6 +119,61 @@ services:
       - "9216:9216"
       networks:
         - app-db
+          ################################################## ElasticSearch #################################################
+          #  elasticsearch:
+          #    image: docker.arvancloud.ir/elasticsearch:7.9.1
+          #    container_name: elasticsearch
+          #    hostname: elasticsearch
+          #    restart: always
+          #    ports:
+          #      - "9200:9200"
+          #      - "9300:9300"
+          #    volumes:
+          #      - test-data:/usr/share/elasticsearch/data/
+          #      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+          #      - /etc/timezone:/etc/timezone:ro
+          #    environment:
+          #      - discovery.type=single-node
+          #      - http.host=0.0.0.0
+          #      - transport.host=0.0.0.0
+          #      - xpack.security.enabled=false
+          #      - xpack.monitoring.enabled=false
+          #      - cluster.name=elasticsearch
+          #      - bootstrap.memory_lock=true
+          #    networks:
+          #      - elk
+          ################################################## LogStash #################################################
+          #  logstash:
+          #    image: docker.arvancloud.ir/logstash:7.9.1
+          #    container_name: logstash
+          #    hostname: logstash
+          #    restart: always
+          #    expose:
+          #      - "5000"
+          #    volumes:
+          #      - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+          #      - ls_data:/usr/share/logstash/data
+          #      - /etc/timezone:/etc/timezone:ro
+          #    depends_on:
+          #      - elasticsearch
+          #    networks:
+          #      - app-db
+          ################################################## Kibana #################################################
+          #  kibana:
+          #    image: docker.arvancloud.ir/kibana:7.9.1
+          #    container_name: kibana
+          #    hostname: kibana
+          #    restart: always
+          #    ports:
+          #      - "5601:5601"
+          #    volumes:
+          #      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+          #      - kb-data:/usr/share/kibana/data
+          #      - /etc/timezone:/etc/timezone:ro
+          #    networks:
+          #      - elk
+          #    depends_on:
+          #      - elasticsearch
 
 networks:
   app-db:
@@ -156,3 +211,5 @@ volumes:
     name: grafana_data
   prometheus_data:
     name: prometheus_data
+  logstash_data:
+    name: logstash_data
