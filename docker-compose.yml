@@ -6,6 +6,18 @@ services:
     container_name: application
     hostname: application
     restart: always
+    mem_limit: 512m
+    cpus: 0.5
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "30"
     volumes:
       - /etc/timezone:/etc/timezone:ro
     environment:
@@ -15,13 +27,21 @@ services:
     depends_on:
       - database
     networks:
-      - lifeweb
+      - frontend
+      - backend
 ################################################# Database #################################################
   database:
     image: docker.arvancloud.ir/mongo:6.0
     container_name: database
     hostname: database
     restart: always
+    mem_limit: 1g
+    cpus: 1.0
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "30"
     volumes:
       - mongo_data:/data/db
       - mongo_log:/var/log/mongodb/
@@ -34,13 +54,20 @@ services:
     expose:
       - "27017:27017"
     networks:
-      - lifeweb
+      - backend
 ################################################# GitLab #################################################
   gitlab:
     image: docker.arvancloud.ir/gitlab/gitlab-ce:17.11.0-ce.0
     container_name: gitlab
     hostname: gitlab
     restart: always
+    mem_limit: 8g
+    cpus: 4.0
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "30"
     environment:
       GITLAB_OMNIBUS_CONFIG: |
         external_url 'http://localhost:80'
@@ -59,13 +86,20 @@ services:
       - gitlab_secret:/secret/gitlab/backups
       - /etc/timezone:/etc/timezone:ro
     networks:
-      - lifeweb
+      - ci
 ################################################# Runner #################################################
   runner:
     image: docker.arvancloud.ir/gitlab/gitlab-runner:v17.11.0
     container_name: runner
     hostname: runner
     restart: always
+    mem_limit: 512m
+    cpus: 0.5
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "30"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./runner-config/config.toml:/etc/gitlab-runner/config.toml
@@ -77,51 +111,78 @@ services:
     container_name: grafana
     hostname: grafana
     restart: always
+    mem_limit: 256m
+    cpus: 0.2
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "30"
     volumes:
       - grafana_data:/var/lib/grafana
       - /etc/timezone:/etc/timezone:ro
-    depends_on:
-      - prometheus
     ports:
       - "3000:3000"
     networks:
-      - lifeweb
+      - monitoring
 ################################################# Prometheus #################################################
   prometheus:
     image: docker.arvancloud.ir/prom/prometheus:v3.4.1
-    restart: always
     container_name: prometeheus
     hostname: prometheus
+    restart: always
+    mem_limit: 512m
+    cpus: 0.5
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "30"
     volumes:
       - prometheus_data:/prometheus
       - ./prometheus:/etc/prometheus
       - /etc/timezone:/etc/timezone:ro
-    depends_on:
-      - mongo-exporter
     ports:
       - "9090:9090"
     networks:
-      - lifeweb
+      - monitoring
+      - frontend
 ################################################# Mongo Exporter #################################################
   mongo-exporter:
-      image: docker.arvancloud.ir/percona/mongodb_exporter:0.44.0
-      container_name: mongo-exporter
-      hostname: mongo-exporter
-      volumes:
-        - /etc/timezone:/etc/timezone:ro
-      environment:
-        MONGODB_URI: mongodb://exporter:exporter@database:27017
-      command: ["--collect-all", "--compatible-mode", "--discovering-mode"]
-      expose:
-      - "9216:9216"
-      networks:
-        - lifeweb
+    image: docker.arvancloud.ir/percona/mongodb_exporter:0.44.0
+    container_name: mongo-exporter
+    hostname: mongo-exporter
+    restart: always
+    mem_limit: 128m
+    cpus: 0.1
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "30"
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      MONGODB_URI: mongodb://exporter:exporter@database:27017
+    command: ["--collect-all", "--compatible-mode", "--discovering-mode"]
+    expose:
+    - "9216:9216"
+    networks:
+      - backend
+      - monitoring
 ################################################# ElasticSearch #################################################
   elasticsearch:
     image: docker.arvancloud.ir/elasticsearch:7.9.1
     container_name: elasticsearch
     hostname: elasticsearch
     restart: always
+    mem_limit: 2g
+    cpus: 2.0
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "30"
     expose:
       - "9200"
     volumes:
@@ -136,50 +197,80 @@ services:
       - cluster.name=elasticsearch
       - bootstrap.memory_lock=true
     networks:
-      - lifeweb
+      - monitoring
 ################################################# LogStash #################################################
   logstash:
     image: docker.arvancloud.ir/logstash:7.9.1
     container_name: logstash
     hostname: logstash
     restart: always
+    mem_limit: 1g
+    cpus: 1.0
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "30"
     expose:
       - "5000"
     volumes:
       - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
       - ls_data:/usr/share/logstash/data
       - /etc/timezone:/etc/timezone:ro
-    depends_on:
-      - elasticsearch
     networks:
-      - lifeweb
+      - frontend
+      - monitoring
 ################################################# Kibana #################################################
   kibana:
     image: docker.arvancloud.ir/kibana:7.9.1
     container_name: kibana
     hostname: kibana
     restart: always
+    mem_limit: 512m
+    cpus: 0.5
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "30"
     ports:
       - "5601:5601"
     volumes:
       - kb_data:/usr/share/kibana/data
       - /etc/timezone:/etc/timezone:ro
-    depends_on:
-      - elasticsearch
     environment:
       - SERVER_NAME=kibana
       - SERVER_HOST=0.0.0.0
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - XPACK_SECURITY_ENABLED=false
     networks:
-      - lifeweb
+      - monitoring
 
 networks:
-  lifeweb:
-    name: lifeweb
+  frontend:
+    name: frontend
     driver: bridge
     driver_opts:
-      com.docker.network.bridge.name: lifeweb
+      com.docker.network.bridge.name: frontend
+
+  backend:
+    name: backend
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: backend
+
+  monitoring:
+    name: monitoring
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: monitoring
+
+  ci:
+    name: ci
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: ci
+
 
 volumes:
   mongo_data:
