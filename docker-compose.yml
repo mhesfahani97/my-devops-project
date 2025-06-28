@@ -1,6 +1,6 @@
 ---
 services:
-############################################### Application #################################################
+############################################## Application #################################################
   application:
     image: "${APP_IMAGE}"
     container_name: application
@@ -15,7 +15,7 @@ services:
     depends_on:
       - database
     networks:
-      - app-db
+      - lifeweb
 ################################################# Database #################################################
   database:
     image: docker.arvancloud.ir/mongo:6.0
@@ -34,7 +34,7 @@ services:
     expose:
       - "27017:27017"
     networks:
-      - app-db
+      - lifeweb
 ################################################# GitLab #################################################
   gitlab:
     image: docker.arvancloud.ir/gitlab/gitlab-ce:17.11.0-ce.0
@@ -58,10 +58,8 @@ services:
       - gitlab_data:/var/opt/gitlab
       - gitlab_secret:/secret/gitlab/backups
       - /etc/timezone:/etc/timezone:ro
-    mem_limit: 8g
-    cpus: 4.0
     networks:
-      - gitlab
+      - lifeweb
 ################################################# Runner #################################################
   runner:
     image: docker.arvancloud.ir/gitlab/gitlab-runner:v17.11.0
@@ -87,10 +85,10 @@ services:
     ports:
       - "3000:3000"
     networks:
-      - grafana
+      - lifeweb
 ################################################# Prometheus #################################################
   prometheus:
-    image: prom/prometheus:v3.4.1
+    image: docker.arvancloud.ir/prom/prometheus:v3.4.1
     restart: always
     container_name: prometeheus
     hostname: prometheus
@@ -103,11 +101,10 @@ services:
     ports:
       - "9090:9090"
     networks:
-      - app-db
-      - grafana
+      - lifeweb
 ################################################# Mongo Exporter #################################################
   mongo-exporter:
-      image: percona/mongodb_exporter:0.44.0
+      image: docker.arvancloud.ir/percona/mongodb_exporter:0.44.0
       container_name: mongo-exporter
       hostname: mongo-exporter
       volumes:
@@ -118,7 +115,7 @@ services:
       expose:
       - "9216:9216"
       networks:
-        - app-db
+        - lifeweb
 ################################################# ElasticSearch #################################################
   elasticsearch:
     image: docker.arvancloud.ir/elasticsearch:7.9.1
@@ -139,7 +136,7 @@ services:
       - cluster.name=elasticsearch
       - bootstrap.memory_lock=true
     networks:
-      - app-db
+      - lifeweb
 ################################################# LogStash #################################################
   logstash:
     image: docker.arvancloud.ir/logstash:7.9.1
@@ -155,7 +152,7 @@ services:
     depends_on:
       - elasticsearch
     networks:
-      - app-db
+      - lifeweb
 ################################################# Kibana #################################################
   kibana:
     image: docker.arvancloud.ir/kibana:7.9.1
@@ -175,24 +172,14 @@ services:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - XPACK_SECURITY_ENABLED=false
     networks:
-      - app-db
+      - lifeweb
 
 networks:
-  app-db:
-    name: app-db
+  lifeweb:
+    name: lifeweb
     driver: bridge
     driver_opts:
-      com.docker.network.bridge.name: app-db
-  gitlab:
-    name: gitlab
-    driver: bridge
-    driver_opts:
-      com.docker.network.bridge.name: gitlab
-  grafana:
-    name: grafana
-    driver: bridge
-    driver_opts:
-      com.docker.network.bridge.name: grafana
+      com.docker.network.bridge.name: lifeweb
 
 volumes:
   mongo_data:
