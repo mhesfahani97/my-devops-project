@@ -37,7 +37,7 @@ vim docker-compose.yml
 # Uncomment the application service
 ```
 
-> ⏱ **Wait \~5–10 minutes** for GitLab to fully initialize.
+> ⏱ **Wait \~10 minutes** for GitLab to fully initialize.
 
 ---
 
@@ -133,7 +133,7 @@ git remote add gitlab git@localhost:root/my-devops-project.git
 Commit and push the code:
 
 ```bash
-git add -A
+sudo git add -A
 git commit -m "Start deploying"
 git push gitlab
 ```

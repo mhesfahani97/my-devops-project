@@ -27,8 +27,6 @@ push:
     - echo "Cleaning up local Docker image..."
     - docker rmi $IMAGE_TAG || true
   tags: [production-like]
-  only:
-    - main
 
 deploy:
   stage: deploy
@@ -51,5 +49,6 @@ test:
     - echo "Checking app after deploy..."
     - curl http://localhost:5000/health
   tags: [production-like]
-  only:
-    - main
+  when: - manual
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
