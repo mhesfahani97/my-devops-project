@@ -2,7 +2,7 @@ stages:
   - build
   - push
   - deploy
-  - test
+  - post-test
 
 variables:
   DOCKER_REGISTRY: localhost:5050
@@ -10,45 +10,42 @@ variables:
 
 default:
   before_script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $DOCKER_REGISTRY
+    - echo "$CI_REGISTRY_PASSWORD" \
+        | docker login -u "$CI_REGISTRY_USER" --password-stdin $DOCKER_REGISTRY
+  tags: [production-like]
 
 build:
   stage: build
   before_script: []
   script:
-    - docker build -t $IMAGE_TAG app
-  tags: [production-like]
+    - docker build -t "$IMAGE_TAG" app
 
 push:
   stage: push
   script:
-    - docker push $IMAGE_TAG
+    - docker push "$IMAGE_TAG"
   after_script:
-    - echo "Cleaning up local Docker image..."
-    - docker rmi $IMAGE_TAG || true
-  tags: [production-like]
+    - docker rmi "$IMAGE_TAG" || true
 
 deploy:
   stage: deploy
   script:
     - echo "Deploying to production..."
     - docker container rm -f application || true
-    - docker images | grep "$DOCKER_REGISTRY/$CI_PROJECT_PATH" | awk '{print $3}' | xargs docker rmi -f || true
-    - echo "APP_IMAGE=$IMAGE_TAG" >> .env
-    - docker pull $IMAGE_TAG
-    - docker compose  up -d application database
-  tags: [production-like]
+    - docker images | grep "$DOCKER_REGISTRY/$CI_PROJECT_PATH" | awk '{print $3}' | xargs -r docker rmi -f
+    - echo "APP_IMAGE=$IMAGE_TAG" > .env
+    - docker pull "$IMAGE_TAG"
+    - docker compose up -d application database
   only:
     - main
 
-test:
-  stage: test
-  image: docker.arvancloud.ir/curlimages/curl:8.14.1
-  before_script: []
-  script:
-    - echo "Checking app after deploy..."
-    - curl http://localhost:5000/health
-  tags: [production-like]
+trigger_tests:
+  stage: post-test
+  needs: ["deploy"]
   when: manual
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  trigger:
+    include:
+      - local: ".gitlab/test-pipeline.yml"
+    strategy: depend

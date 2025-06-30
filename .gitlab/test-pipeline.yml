@@ -1,0 +1,13 @@
+stages:
+  - test
+
+test:
+  stage: test
+  image: docker.arvancloud.ir/curlimages/curl:8.14.1
+  before_script: []
+  script:
+    - echo "Checking app after deploy..."
+    - curl -sSf http://localhost:5000/health | grep -q '"status":"ok"'
+  when: manual
+  tags: [production-like]
+
