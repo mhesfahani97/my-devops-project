@@ -19,7 +19,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 3,
+  "id": 2,
   "links": [],
   "panels": [
     {
@@ -687,7 +687,7 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 8,
+        "w": 6,
         "x": 0,
         "y": 13
       },
@@ -788,8 +788,8 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 8,
-        "x": 8,
+        "w": 5,
+        "x": 6,
         "y": 13
       },
       "id": 5,
@@ -829,19 +829,6 @@
       "type": "timeseries"
     },
     {
-      "collapsed": true,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 19
-      },
-      "id": 24,
-      "panels": [],
-      "title": "Row title",
-      "type": "row"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "beqb5yum3va4gd"
@@ -866,10 +853,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 6,
         "w": 7,
-        "x": 0,
-        "y": 20
+        "x": 11,
+        "y": 13
       },
       "id": 25,
       "options": {
@@ -932,10 +919,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 5,
-        "x": 7,
-        "y": 20
+        "h": 6,
+        "w": 6,
+        "x": 18,
+        "y": 13
       },
       "id": 26,
       "options": {
@@ -1096,5 +1083,5 @@
   "timezone": "browser",
   "title": "MongoDB + Application",
   "uid": "eeqi44u1qi6m8e",
-  "version": 5
+  "version": 1
 }

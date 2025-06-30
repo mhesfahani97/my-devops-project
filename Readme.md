@@ -1,5 +1,43 @@
 
 ---
+## Project Overview
+
+## ✅ DevOps Task Completion Checklist
+
+| Task Item                                                    | Status                       |
+| ------------------------------------------------------------ | ---------------------------- |
+| 1. **Flask REST API with `/health` and `/data`**             | ✅ Done                       |
+| 2. **Connected to MongoDB with env credentials**             | ✅ Done                       |
+| 3. **Dockerized app with Dockerfile**                        | ✅ Done                       |
+| 4. **Docker Compose with services:**                         |                              |
+| ─ `application`                                              | ✅ Done                       |
+| ─ `database` (MongoDB)                                       | ✅ Done                       |
+| ─ `prometheus`                                               | ✅ Done                       |
+| ─ `grafana`                                                  | ✅ Done                       |
+| ─ `elasticsearch`, `logstash`, `kibana`                      | ✅ Done                       |
+| 5. **CI/CD with GitLab CI**                                  | ✅ Done                       |
+| ─ `build` stage                                              | ✅ Done                       |
+| ─ `push` stage                                               | ✅ Done                       |
+| ─ `deploy` stage                                             | ✅ Done                       |
+| ─ `test` stage with curl (manual trigger)                    | ✅ Done                       |
+| 6. **Monitoring with Prometheus and Grafana**                | ✅ Done                       |
+| ─ Prometheus scrapes app metrics                             | ✅ Done                       |
+| ─ Grafana with dashboards via provisioning                   | ✅ Done                       |
+| 7. **Logging with ELK**                                      | ✅ Done                       |
+| ─ Application logs sent to Logstash via TCP                  | ✅ Done                       |
+| ─ Logs searchable in Kibana (via Elasticsearch)              | ✅ Done                       |
+| 8. **README documentation**                                  | ✅ Done                       |
+| ─ How to run project locally                                 | ✅ Done                       |
+| ─ GitLab setup instructions                                  | ✅ Done                       |
+| ─ Monitoring & logging walkthrough                           | ✅ Done                       |
+| ─ Application test commands                                  | ✅ Done                       |
+| 9. **Bonus items**                                           |                              |
+| ─ `.env` used for image tag and config                       | ✅ Done                       |
+| ─ Docker best practices applied (slim image, no cache, etc.) | ✅ Done                       |
+| ─ Clean and modular pipeline design                          | ✅ Done                       |
+| 10. *(Optional)* Infrastructure as Code (Ansible/Terraform)  | ❌ Not implemented (optional) |
+
+---
 
 ## 🚀 How to Run the Project Locally
 
@@ -126,7 +164,7 @@ docker restart runner
 
 ---
 
-### 7. Connect Local Repo to GitLab
+### 7. Connect Local Repo to GitLab (pipeline based on merge and push)
 
 ```bash
 cd my-devops-project
@@ -151,6 +189,7 @@ git push gitlab
 ```
 http://localhost:9090/targets
 ```
+> ⏱ **Wait \~5 minutes** for application to fully initialize.
 You should see the `application`, `mongo-exporter`.
 
 ### 8-2 Grafana
@@ -174,15 +213,51 @@ http://localhost:5601
 ```
 
 2. Navigate to **Stack Management ▸ Index Management**.  
-You should see your Elasticsearch indices (e.g., `app-logs-000001`).
+You should see your Elasticsearch indices (e.g., `flask-logs-*`).
 
 3. **View live logs**
 
 * Go to **Discover** in Kibana’s sidebar.
-* Pick the index pattern that matches your logs (e.g., `app-logs-*`).
-* Set the time range (top-right) to **Last 15 minutes**.
+* Pick the index pattern that matches your logs (`flask-logs-*`).
+* Set time field to `@timestamp`.
+* Now create index pattern.
+* Go to discover again and Set the time range (top-right) to **Last 15 minutes**.
 * Logs streamed by the application (via Logstash) will appear in real time — search, filter, or add visualizations as needed.
 
-> ℹ️ If no logs appear, check the Logstash container logs for connection errors and ensure the application container can reach `logstash:5000`.
+---
 
+## 🧪 Test Application Functionality
+
+After the application is running, you can verify that it's working using the following commands:
+
+### 1. Check Health Endpoint
+
+```bash
+curl http://localhost:5000/health
+````
+---
+
+### 2. Insert Sample Data
+
+```bash
+curl -X POST http://localhost:5000/data \
+  -H "Content-Type: application/json" \
+  -d '{"user": "esfahani", "score": 20}'
+```
+
+---
+
+### 3. Retrieve All Data
+
+```bash
+curl http://localhost:5000/data
+```
+
+---
+
+### 4. Check Prometheus Metrics
+
+```bash
+curl http://localhost:5000/metrics
+```
 ---

@@ -1,29 +1,29 @@
 ---
 services:
-############################################# Application #################################################
-  application:
-    image: "${APP_IMAGE}"
-    container_name: application
-    hostname: application
-    restart: always
-    mem_limit: 512m
-    cpus: 0.5
-    logging:
-      driver: json-file
-      options:
-        max-size: "100m"
-        max-file: "30"
-    volumes:
-      - /etc/timezone:/etc/timezone:ro
-    environment:
-      MONGO_URI: "${MONGO_URI}"
-    ports:
-      - "5000:5000"
-    depends_on:
-      - database
-    networks:
-      - frontend
-      - backend
+  ############################################## Application #################################################
+#  application:
+#    image: "${APP_IMAGE}"
+#    container_name: application
+#    hostname: application
+#    restart: always
+#    mem_limit: 512m
+#    cpus: 0.5
+#    logging:
+#      driver: json-file
+#      options:
+#        max-size: "100m"
+#        max-file: "30"
+#    volumes:
+#      - /etc/timezone:/etc/timezone:ro
+#    environment:
+#      MONGO_URI: "${MONGO_URI}"
+#    ports:
+#      - "5000:5000"
+#    depends_on:
+#      - database
+#    networks:
+#      - frontend
+#      - backend
 ################################################ Database #################################################
   database:
     image: docker.arvancloud.ir/mongo:6.0
@@ -173,13 +173,6 @@ services:
     container_name: elasticsearch
     hostname: elasticsearch
     restart: always
-    mem_limit: 2g
-    cpus: 2.0
-    logging:
-      driver: json-file
-      options:
-        max-size: "100m"
-        max-file: "30"
     expose:
       - "9200"
     volumes:
@@ -201,13 +194,6 @@ services:
     container_name: logstash
     hostname: logstash
     restart: always
-    mem_limit: 1g
-    cpus: 1.0
-    logging:
-      driver: json-file
-      options:
-        max-size: "100m"
-        max-file: "30"
     expose:
       - "5000"
     volumes:
@@ -225,13 +211,6 @@ services:
     container_name: kibana
     hostname: kibana
     restart: always
-    mem_limit: 512m
-    cpus: 0.5
-    logging:
-      driver: json-file
-      options:
-        max-size: "100m"
-        max-file: "30"
     ports:
       - "5601:5601"
     volumes:
