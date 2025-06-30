@@ -1,29 +1,29 @@
 ---
 services:
 ############################################## Application #################################################
-  application:
-    image: "${APP_IMAGE}"
-    container_name: application
-    hostname: application
-    restart: always
-    mem_limit: 512m
-    cpus: 0.5
-    logging:
-      driver: json-file
-      options:
-        max-size: "100m"
-        max-file: "30"
-    volumes:
-      - /etc/timezone:/etc/timezone:ro
-    environment:
-      MONGO_URI: "${MONGO_URI}"
-    ports:
-      - "5000:5000"
-    depends_on:
-      - database
-    networks:
-      - frontend
-      - backend
+#  application:
+#    image: "${APP_IMAGE}"
+#    container_name: application
+#    hostname: application
+#    restart: always
+#    mem_limit: 512m
+#    cpus: 0.5
+#    logging:
+#      driver: json-file
+#      options:
+#        max-size: "100m"
+#        max-file: "30"
+#    volumes:
+#      - /etc/timezone:/etc/timezone:ro
+#    environment:
+#      MONGO_URI: "${MONGO_URI}"
+#    ports:
+#      - "5000:5000"
+#    depends_on:
+#      - database
+#    networks:
+#      - frontend
+#      - backend
 ################################################ Database #################################################
   database:
     image: docker.arvancloud.ir/mongo:6.0
@@ -116,6 +116,8 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
       - /etc/timezone:/etc/timezone:ro
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
     ports:
       - "3000:3000"
     networks:
@@ -215,6 +217,8 @@ services:
     networks:
       - frontend
       - monitoring
+    depends_on:
+      - elasticsearch
 ################################################# Kibana #################################################
   kibana:
     image: docker.arvancloud.ir/kibana:7.9.1
@@ -240,6 +244,8 @@ services:
       - XPACK_SECURITY_ENABLED=false
     networks:
       - monitoring
+    depends_on:
+      - elasticsearch
 
 networks:
   frontend:

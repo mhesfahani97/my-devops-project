@@ -152,40 +152,21 @@ You should see the `application`, `mongo-exporter`.
 
 ### 8-2 Grafana
 
-1. Visit Grafana:  
+1. Visit Grafana dashboard and datasource:  
 ```
 
-[http://localhost:3000](http://localhost:3000)
+http://localhost:3000
 
 ```
 * **Username:** `admin`  
-* **Password:** `admin` (prompted to change on first login)
-
-2. **Add the Prometheus data-source**
-
-| Field | Value |
-|-------|-------|
-| **Type** | `Prometheus` |
-| **URL** | `http://prometheus:9090` |
-| **Skip TLS verification** | ✅ (check it) |
-| **HTTP Method** | `GET` |
-
-Click **Save & Test** — you should see “Data source is working”.
-
-3. **Import dashboards**
-
-* Grafana → **Dashboards ▸ Import**
-* Upload or paste the JSON files from `./grafana/dashboards/`
-* Hit **Import**
-
-Your panels should immediately start displaying app and database metrics.
+* **Password:** `admin`
 
 ### 8-3 ELK (Stack)
 
 1. Open Kibana:  
 ```
 
-[http://localhost:5601](http://localhost:5601)
+http://localhost:5601
 
 ```
 
