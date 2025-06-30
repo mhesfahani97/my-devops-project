@@ -146,11 +146,9 @@ git push gitlab
 
 1. Open **Prometheus Targets** in your browser:  
 ```
-
-[http://localhost:9090/targets](http://localhost:9090/targets)
-
+http://localhost:9090/targets
 ```
-You should see the `application`, `mongo-exporter`, and any other scrape targets listed as **UP**.
+You should see the `application`, `mongo-exporter`.
 
 ### 8-2 Grafana
 

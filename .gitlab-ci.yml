@@ -49,6 +49,6 @@ test:
     - echo "Checking app after deploy..."
     - curl http://localhost:5000/health
   tags: [production-like]
-  when: - manual
+  when: manual
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
