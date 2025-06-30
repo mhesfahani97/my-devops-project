@@ -6,23 +6,18 @@ import logging
 import json
 import socket
 
-# MongoDB URI from environment
 MONGO_URI = os.environ.get(
     "MONGO_URI",
     "mongodb://lifeweb:It5~TPn04p1-eTAH@database:27017/appdb?authSource=admin"
 )
 
-# Flask setup
 app = Flask(__name__)
 app.config["MONGO_URI"] = MONGO_URI
 
-# Prometheus metrics
 metrics = PrometheusMetrics(app)
 
-# MongoDB client
 mongo = PyMongo(app)
 
-# Structured JSON Logging
 class JSONFormatter(logging.Formatter):
     def format(self, record):
         return json.dumps({
@@ -37,12 +32,10 @@ class JSONFormatter(logging.Formatter):
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-# Console logging (stdout)
 console_handler = logging.StreamHandler()
 console_handler.setFormatter(JSONFormatter())
 logger.addHandler(console_handler)
 
-# TCP log handler to Logstash
 class TCPLogstashHandler(logging.Handler):
     def emit(self, record):
         try:
@@ -58,13 +51,11 @@ tcp_handler = TCPLogstashHandler()
 tcp_handler.setFormatter(JSONFormatter())
 logger.addHandler(tcp_handler)
 
-# Health Check
 @app.route("/health", methods=["GET"])
 def health():
     logger.info("Health check accessed")
     return jsonify(status="ok"), 200
 
-# Data API
 @app.route("/data", methods=["GET", "POST"])
 def data():
     collection = mongo.db.testdata
@@ -78,7 +69,6 @@ def data():
         logger.info(f"Retrieved {len(docs)} documents")
         return jsonify(docs), 200
 
-# Entrypoint
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
 

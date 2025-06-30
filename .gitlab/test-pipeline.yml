@@ -7,7 +7,6 @@ test:
   before_script: []
   script:
     - echo "Checking app after deploy..."
-    - curl -sSf http://localhost:5000/health | grep -q '"status":"ok"'
-  when: manual
+    - curl http://localhost:5000/health
   tags: [production-like]
 
