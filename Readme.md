@@ -64,7 +64,7 @@ Start all supporting services (GitLab, monitoring, logging):
 ```bash
 docker compose pull
 docker pull docker.arvancloud.ir/curlimages/curl:8.14.1 
-docker pull docker.arvancloud.ir/pull docker:dind
+docker pull docker.arvancloud.ir/docker:dind
 docker compose up -d gitlab runner grafana prometheus mongo-exporter elasticsearch kibana logstash
 ```
 
