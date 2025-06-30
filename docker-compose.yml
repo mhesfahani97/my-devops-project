@@ -6,13 +6,6 @@ services:
     container_name: application
     hostname: application
     restart: always
-    mem_limit: 512m
-    cpus: 0.5
-    logging:
-      driver: json-file
-      options:
-        max-size: "100m"
-        max-file: "30"
     volumes:
       - /etc/timezone:/etc/timezone:ro
     environment:
@@ -30,13 +23,6 @@ services:
     container_name: database
     hostname: database
     restart: always
-    mem_limit: 1g
-    cpus: 1.0
-    logging:
-      driver: json-file
-      options:
-        max-size: "100m"
-        max-file: "30"
     volumes:
       - mongo_data:/data/db
       - mongo_log:/var/log/mongodb/
@@ -56,13 +42,6 @@ services:
     container_name: gitlab
     hostname: gitlab
     restart: always
-    mem_limit: 8g
-    cpus: 4.0
-    logging:
-      driver: json-file
-      options:
-        max-size: "100m"
-        max-file: "30"
     environment:
       GITLAB_OMNIBUS_CONFIG: |
         external_url 'http://localhost:80'
@@ -88,13 +67,6 @@ services:
     container_name: runner
     hostname: runner
     restart: always
-    mem_limit: 512m
-    cpus: 0.5
-    logging:
-      driver: json-file
-      options:
-        max-size: "100m"
-        max-file: "30"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./runner-config/:/etc/gitlab-runner/
@@ -106,13 +78,6 @@ services:
     container_name: grafana
     hostname: grafana
     restart: always
-    mem_limit: 256m
-    cpus: 0.2
-    logging:
-      driver: json-file
-      options:
-        max-size: "100m"
-        max-file: "30"
     volumes:
       - grafana_data:/var/lib/grafana
       - /etc/timezone:/etc/timezone:ro
@@ -128,13 +93,6 @@ services:
     container_name: prometeheus
     hostname: prometheus
     restart: always
-    mem_limit: 512m
-    cpus: 0.5
-    logging:
-      driver: json-file
-      options:
-        max-size: "100m"
-        max-file: "30"
     volumes:
       - prometheus_data:/prometheus
       - ./prometheus:/etc/prometheus
@@ -150,13 +108,6 @@ services:
     container_name: mongo-exporter
     hostname: mongo-exporter
     restart: always
-    mem_limit: 128m
-    cpus: 0.1
-    logging:
-      driver: json-file
-      options:
-        max-size: "100m"
-        max-file: "30"
     volumes:
       - /etc/timezone:/etc/timezone:ro
     environment:
